@@ -50,6 +50,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   };
 
   const renderFile = () => {
+    if (!post.fileUrl) return null;
+
     if (post.fileType.startsWith('image/')) {
       return <img src={post.fileUrl} alt={post.caption} className="w-full object-cover" />;
     }

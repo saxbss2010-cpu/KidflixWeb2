@@ -12,14 +12,20 @@ interface PostGridProps {
 const PostGrid: React.FC<PostGridProps> = ({ posts }) => (
   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-4 p-1 md:p-4">
     {posts.map(post => (
-      <div key={post.id} className="relative aspect-square group cursor-pointer">
+      <div key={post.id} className="relative aspect-square group cursor-pointer border border-gray-800 bg-secondary">
         {post.fileType.startsWith('image/') ? (
           <img src={post.fileUrl} alt={post.caption} className="w-full h-full object-cover" />
         ) : post.fileType.startsWith('video/') ? (
           <video src={post.fileUrl} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-secondary flex items-center justify-center">
-              <DocumentIcon className="w-16 h-16 text-gray-600"/>
+          <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
+             {post.fileUrl ? (
+                <DocumentIcon className="w-16 h-16 text-gray-600"/>
+             ) : (
+                <p className="text-xs md:text-sm text-gray-300 text-center line-clamp-5 break-words font-medium">
+                    {post.caption}
+                </p>
+             )}
           </div>
         )}
          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center text-white text-lg font-bold opacity-0 group-hover:opacity-100">

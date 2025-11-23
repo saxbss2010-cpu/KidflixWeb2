@@ -1,3 +1,4 @@
+
 import React, { useState, useContext, useCallback } from 'react';
 import { AppContext } from '../contexts/AppContext';
 import Spinner from './Spinner';
@@ -28,17 +29,17 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ onClose }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !preview) {
-        showToast('Please select a file to upload.', 'error');
+    if (!file && !caption.trim()) {
+        showToast('Please add a caption or select a file.', 'error');
         return;
     }
     setIsLoading(true);
     // Simulate upload delay
     setTimeout(() => {
         createPost({
-            fileUrl: preview,
-            fileType: file.type,
-            fileName: file.name,
+            fileUrl: preview || '',
+            fileType: file?.type || '',
+            fileName: file?.name || '',
             caption: caption,
         });
         setIsLoading(false);
@@ -60,7 +61,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ onClose }) => {
             {!preview ? (
               <label htmlFor="file-upload" className="relative block w-full border-2 border-dashed border-gray-600 rounded-lg p-12 text-center cursor-pointer hover:border-accent-hover focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-accent-hover transition-colors">
                 <UploadIcon className="mx-auto h-12 w-12 text-gray-500" />
-                <span className="mt-2 block text-sm font-medium text-accent">Upload a file</span>
+                <span className="mt-2 block text-sm font-medium text-accent">Upload a file (Optional)</span>
                 <p className="text-xs text-gray-500 mt-1">Any file type and size</p>
                 <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} />
               </label>
@@ -77,7 +78,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ onClose }) => {
                     )}
                 </div>
                 <button type="button" onClick={() => { setFile(null); setPreview(null); }} className="text-sm text-accent hover:underline mb-4">
-                  Choose a different file
+                  Remove file
                 </button>
               </div>
             )}
@@ -92,7 +93,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ onClose }) => {
           <div className="px-6 py-4 bg-gray-800/50 text-right rounded-b-lg">
             <button
               type="submit"
-              disabled={isLoading || !file}
+              disabled={isLoading || (!file && !caption.trim())}
               className="inline-flex justify-center items-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-hover disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading && <Spinner />}
