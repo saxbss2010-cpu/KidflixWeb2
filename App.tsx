@@ -10,8 +10,8 @@ import Profile from './components/Profile';
 import Toast from './components/Toast';
 import Notifications from './components/Notifications';
 import Settings from './components/Settings';
+// FIX: Import the Messages component to add it to the router.
 import Messages from './components/Messages';
-import NetworkExplorer from './components/NetworkExplorer';
 
 const App: React.FC = () => {
   const { currentUser } = useContext(AppContext);
@@ -27,9 +27,9 @@ const App: React.FC = () => {
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/notifications" element={currentUser ? <Notifications /> : <Navigate to="/login" />} />
             <Route path="/settings" element={currentUser ? <Settings /> : <Navigate to="/login" />} />
+            {/* FIX: Add routes for the messaging feature. */}
             <Route path="/messages" element={currentUser ? <Messages /> : <Navigate to="/login" />} />
             <Route path="/messages/:username" element={currentUser ? <Messages /> : <Navigate to="/login" />} />
-            <Route path="/network" element={<NetworkExplorer />} />
             <Route path="/" element={<Feed />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
