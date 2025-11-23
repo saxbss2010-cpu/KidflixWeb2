@@ -1,6 +1,8 @@
+
 import React, { useContext, useState } from 'react';
 import { AppContext } from '../contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { ArrowDownTrayIcon, ArrowUpTrayIcon, ClipboardDocumentCheckIcon } from './icons';
 
 // Simple hash function for passwords
 const simpleHash = (s: string) => {
@@ -14,7 +16,7 @@ const simpleHash = (s: string) => {
 };
 
 const Settings: React.FC = () => {
-  const { currentUser, updateUserProfile, updatePassword, showToast, updateUserAvatar } = useContext(AppContext);
+  const { currentUser, updateUserProfile, updatePassword, showToast, updateUserAvatar, exportState, importState } = useContext(AppContext);
   const navigate = useNavigate();
 
   if (!currentUser) {
@@ -28,6 +30,8 @@ const Settings: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [newAvatarPreview, setNewAvatarPreview] = useState<string | null>(null);
+  
+  const [importString, setImportString] = useState('');
 
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,9 +88,69 @@ const Settings: React.FC = () => {
         showToast('Profile picture updated successfully!', 'success');
     }
   };
+  
+  const handleExport = () => {
+      const state = exportState();
+      navigator.clipboard.writeText(state).then(() => {
+          showToast('Data copied to clipboard! Paste this on your other device.', 'success');
+      });
+  };
+
+  const handleImport = () => {
+      if(!importString) return;
+      if (window.confirm('Importing data will merge posts, users, and messages from the other device. Continue?')) {
+          const success = importState(importString);
+          if (success) {
+              setImportString('');
+          }
+      }
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
+    
+      <div className="bg-secondary rounded-lg border border-gray-700">
+        <h2 className="text-xl font-bold text-white p-4 border-b border-gray-700">Sync Data (Fix Missing Posts)</h2>
+        <div className="p-6 space-y-6">
+            <p className="text-gray-300 text-sm">
+                KidFlix runs locally on your device (offline mode). To see posts made on other devices (e.g. at your friend's house), you need to sync manually.
+            </p>
+            
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                <h3 className="font-semibold text-white mb-2 flex items-center">
+                    <ArrowUpTrayIcon className="w-5 h-5 mr-2 text-accent"/>
+                    Export from Device A
+                </h3>
+                <p className="text-xs text-gray-400 mb-3">On the device that HAS the posts you want to see:</p>
+                <button onClick={handleExport} className="flex items-center justify-center w-full py-2 px-4 rounded-md text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 border border-gray-500 transition-colors">
+                    <ClipboardDocumentCheckIcon className="w-5 h-5 mr-2" />
+                    Copy Data to Clipboard
+                </button>
+            </div>
+
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-600">
+                <h3 className="font-semibold text-white mb-2 flex items-center">
+                    <ArrowDownTrayIcon className="w-5 h-5 mr-2 text-green-500"/>
+                    Import to Device B
+                </h3>
+                <p className="text-xs text-gray-400 mb-3">On this device (where posts are missing), paste the code below:</p>
+                <textarea 
+                    value={importString}
+                    onChange={(e) => setImportString(e.target.value)}
+                    placeholder="Paste the data code here..."
+                    className="w-full h-24 bg-gray-900 border border-gray-700 rounded-md p-2 text-xs text-gray-300 focus:outline-none focus:ring-accent focus:border-accent mb-3"
+                />
+                <button 
+                    onClick={handleImport} 
+                    disabled={!importString}
+                    className="w-full py-2 px-4 rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+                >
+                    Merge Data
+                </button>
+            </div>
+        </div>
+      </div>
+
       <div className="bg-secondary rounded-lg border border-gray-700">
         <h2 className="text-xl font-bold text-white p-4 border-b border-gray-700">Profile Picture</h2>
         <form onSubmit={handleAvatarUpdate} className="p-6 flex flex-col items-center space-y-4">
