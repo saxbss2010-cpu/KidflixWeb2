@@ -3,11 +3,11 @@ import React, { useContext, useState, useMemo, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppContext } from '../contexts/AppContext';
 import CreatePostModal from './CreatePostModal';
-import { HomeIcon, PlusCircleIcon, SearchIcon, LoginIcon, LogoutIcon, BellIcon, Cog6ToothIcon } from './icons';
+import { HomeIcon, PlusCircleIcon, SearchIcon, LoginIcon, LogoutIcon, BellIcon, Cog6ToothIcon, GlobeAltIcon, ChatBubbleLeftRightIcon } from './icons';
 import { playNotificationSound } from '../services/audioService';
 
 const Header: React.FC = () => {
-  const { currentUser, logout, searchQuery, setSearchQuery, notifications } = useContext(AppContext);
+  const { currentUser, logout, searchQuery, setSearchQuery, notifications, messages } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -20,6 +20,11 @@ const Header: React.FC = () => {
     if (!currentUser) return 0;
     return notifications.filter(n => n.recipientId === currentUser.id && !n.read).length;
   }, [notifications, currentUser]);
+
+  const unreadMessagesCount = useMemo(() => {
+    if (!currentUser) return 0;
+    return messages.filter(m => m.recipientId === currentUser.id && !m.read).length;
+  }, [messages, currentUser]);
 
   const prevUnreadCountRef = useRef(unreadNotificationsCount);
   useEffect(() => { 
@@ -61,9 +66,18 @@ const Header: React.FC = () => {
                 <Link to="/" aria-label="Home" className="text-gray-300 hover:text-white transition-colors">
                     <HomeIcon className="w-7 h-7" />
                 </Link>
+                <Link to="/network" aria-label="Network Database" className="text-gray-300 hover:text-white transition-colors">
+                    <GlobeAltIcon className="w-7 h-7" />
+                </Link>
                 <button onClick={() => setIsModalOpen(true)} aria-label="Create Post" className="text-gray-300 hover:text-white transition-colors">
                     <PlusCircleIcon className="w-7 h-7" />
                 </button>
+                <Link to="/messages" aria-label="Messages" className="relative text-gray-300 hover:text-white transition-colors">
+                    <ChatBubbleLeftRightIcon className="w-7 h-7" />
+                    {unreadMessagesCount > 0 && (
+                        <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-accent ring-2 ring-secondary"></span>
+                    )}
+                </Link>
                 <Link to="/notifications" aria-label="Notifications" className="relative text-gray-300 hover:text-white transition-colors">
                     <BellIcon className="w-7 h-7" />
                     {unreadNotificationsCount > 0 && (
