@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 // FIX: Import the Message type for the new messaging feature.
 import { User, Post, Comment, Notification, Message } from '../types';
@@ -54,9 +55,6 @@ interface AppContextType {
   messages: Message[];
   sendMessage: (recipientId: string, text: string) => void;
   markMessagesAsRead: (senderId: string) => void;
-  // NEW: Manual Sync functions
-  exportState: () => string;
-  importState: (jsonString: string) => boolean;
 }
 
 export const AppContext = createContext<AppContextType>(null!);
@@ -70,11 +68,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<User | null>(() => getStorageItem('currentUser', null));
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    // Ensure admin exists in case of clean slate but keeping valid users
-    // This is just a safeguard; usually initialData handles it.
-  }, []);
 
   useEffect(() => setStorageItem('users', users), [users]);
   useEffect(() => setStorageItem('posts', posts), [posts]);
@@ -425,99 +418,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  const exportState = () => {
-    const state = {
-        users,
-        posts,
-        messages,
-        notifications
-    };
-    return btoa(JSON.stringify(state));
-  };
-
-  const importState = (encodedState: string) => {
-    try {
-        const json = atob(encodedState);
-        const data = JSON.parse(json);
-        
-        if (!Array.isArray(data.users) || !Array.isArray(data.posts)) {
-            showToast('Invalid data format.', 'error');
-            return false;
-        }
-
-        // Merge Users
-        setUsers(prev => {
-            const existingIds = new Set(prev.map(u => u.id));
-            const newUsers = data.users.filter((u: User) => !existingIds.has(u.id));
-            
-            // For existing users, we might want to merge following/followers lists
-            const updatedExistingUsers = prev.map(user => {
-                const importedUser = data.users.find((u: User) => u.id === user.id);
-                if (importedUser) {
-                    return {
-                        ...user,
-                        following: [...new Set([...user.following, ...importedUser.following])],
-                        followers: [...new Set([...user.followers, ...importedUser.followers])],
-                        favorites: [...new Set([...user.favorites, ...importedUser.favorites])],
-                    };
-                }
-                return user;
-            });
-
-            return [...updatedExistingUsers, ...newUsers];
-        });
-        
-        // Merge Posts
-        setPosts(prev => {
-             const existingPostsMap = new Map<string, Post>(prev.map(p => [p.id, p]));
-             const newPosts = data.posts as Post[];
-             
-             newPosts.forEach((newPost: Post) => {
-                 if (existingPostsMap.has(newPost.id)) {
-                     // Merge likes and comments
-                     const existingPost = existingPostsMap.get(newPost.id)!;
-                     const mergedLikes = [...new Set([...existingPost.likes, ...newPost.likes])];
-                     
-                     const existingCommentIds = new Set(existingPost.comments.map((c: Comment) => c.id));
-                     const newComments = newPost.comments.filter((c: Comment) => !existingCommentIds.has(c.id));
-                     const mergedComments = [...existingPost.comments, ...newComments].sort((a: Comment, b: Comment) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-
-                     existingPostsMap.set(newPost.id, {
-                         ...existingPost,
-                         likes: mergedLikes,
-                         comments: mergedComments
-                     });
-                 } else {
-                     existingPostsMap.set(newPost.id, newPost);
-                 }
-             });
-
-             return Array.from(existingPostsMap.values()).sort((a: Post, b: Post) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        });
-        
-        // Merge Messages
-        setMessages(prev => {
-            const existingIds = new Set(prev.map(m => m.id));
-            const newMessages = data.messages.filter((m: Message) => !existingIds.has(m.id));
-            return [...prev, ...newMessages].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-        });
-        
-        // Merge Notifications
-        setNotifications(prev => {
-            const existingIds = new Set(prev.map(n => n.id));
-            const newNotifs = data.notifications.filter((n: Notification) => !existingIds.has(n.id));
-            return [...prev, ...newNotifs];
-        });
-        
-        showToast('Data synced successfully!', 'success');
-        return true;
-    } catch (e) {
-        console.error(e);
-        showToast('Failed to import data. Invalid code.', 'error');
-        return false;
-    }
-  };
-
   return (
     <AppContext.Provider value={{ 
         currentUser, users, posts, notifications, toast, messages,
@@ -525,7 +425,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toggleFollow, showToast, searchQuery, setSearchQuery,
         updateUserProfile, updatePassword, markNotificationsAsRead,
         updateUserAvatar, toggleFavorite, deletePost, deleteComment, deleteUser,
-        sendMessage, markMessagesAsRead, exportState, importState
+        sendMessage, markMessagesAsRead
     }}>
       {children}
     </AppContext.Provider>
