@@ -1,4 +1,3 @@
-
 import React, { useContext, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { AppContext } from '../contexts/AppContext';
@@ -53,17 +52,17 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     if (!post.fileUrl) return null;
 
     if (post.fileType.startsWith('image/')) {
-      return <img src={post.fileUrl} alt={post.caption} className="w-full object-cover" />;
+      return <img src={post.fileUrl} alt={post.caption} className="w-full object-cover max-h-[600px]" />;
     }
     if (post.fileType.startsWith('video/')) {
-      return <video src={post.fileUrl} controls className="w-full"></video>;
+      return <video src={post.fileUrl} controls className="w-full max-h-[600px] bg-black"></video>;
     }
     return (
-      <div className="bg-gray-800 p-6 flex flex-col items-center justify-center h-64">
+      <div className="bg-gray-800/50 p-8 flex flex-col items-center justify-center h-64 border-y border-white/5">
         <DocumentIcon className="w-16 h-16 text-gray-500 mb-4" />
-        <p className="text-gray-400 font-medium">{post.fileName}</p>
-        <a href={post.fileUrl} download={post.fileName} className="mt-4 px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-colors">
-          Download
+        <p className="text-gray-300 font-medium">{post.fileName}</p>
+        <a href={post.fileUrl} download={post.fileName} className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/10 backdrop-blur-sm">
+          Download File
         </a>
       </div>
     );
@@ -86,102 +85,119 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (
     <>
-      <div className="bg-secondary rounded-lg overflow-hidden border border-gray-800">
-        <div className="p-4 flex items-center justify-between">
+      <div className="bg-glass-gradient backdrop-blur-xl rounded-3xl overflow-hidden border border-glass-border shadow-2xl transition-all hover:border-white/20">
+        <div className="p-5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-              <Link to={`/profile/${author.username}`}>
-                  <img src={author.avatar} alt={author.username} className="w-10 h-10 rounded-full object-cover" />
+              <Link to={`/profile/${author.username}`} className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-accent to-purple-600 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-200"></div>
+                  <img src={author.avatar} alt={author.username} className="relative w-10 h-10 rounded-full object-cover ring-2 ring-black" />
               </Link>
-              <div className="flex items-center">
-                  <Link to={`/profile/${author.username}`} className="font-semibold text-white hover:underline">
-                      {author.username}
-                  </Link>
-                  {author.role === 'admin' && (
-                    <span className="ml-2 px-1.5 py-0.5 bg-red-600 text-white text-[10px] font-bold rounded uppercase">
-                      ADM
-                    </span>
-                  )}
+              <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <Link to={`/profile/${author.username}`} className="font-bold text-white hover:text-accent transition-colors">
+                        {author.username}
+                    </Link>
+                    {author.role === 'admin' && (
+                        <span className="ml-2 px-1.5 py-0.5 bg-accent/20 border border-accent/30 text-accent text-[10px] font-bold rounded uppercase tracking-wider">
+                        ADM
+                        </span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500">{timeSince(post.timestamp)} ago</span>
               </div>
           </div>
           <div className="flex items-center gap-2">
             {currentUser && currentUser.id !== author.id && (
-                <button onClick={handleFollow} className={`px-4 py-1 text-sm font-semibold rounded-md transition-colors ${isFollowing ? 'bg-gray-600 text-gray-200' : 'bg-accent text-white hover:bg-accent-hover'}`}>
+                <button 
+                    onClick={handleFollow} 
+                    className={`px-4 py-1.5 text-xs font-bold rounded-full transition-all duration-300 ${
+                        isFollowing 
+                        ? 'bg-white/10 text-gray-300 border border-white/5 hover:bg-white/20' 
+                        : 'bg-accent text-white shadow-lg shadow-accent/20 hover:scale-105 hover:bg-accent-hover'
+                    }`}
+                >
                   {isFollowing ? 'Following' : 'Follow'}
                 </button>
             )}
             {currentUser?.role === 'admin' && (
-              <button onClick={() => window.confirm('Are you sure you want to delete this post?') && deletePost(post.id)} aria-label="Delete post" title="Delete Post" className="p-1 text-gray-400 hover:text-red-500 transition-colors">
-                  <XMarkIcon className="w-5 h-5" />
+              <button onClick={() => window.confirm('Are you sure you want to delete this post?') && deletePost(post.id)} className="p-2 text-gray-500 hover:text-red-500 transition-colors bg-white/5 hover:bg-white/10 rounded-full">
+                  <XMarkIcon className="w-4 h-4" />
               </button>
             )}
           </div>
         </div>
 
-        <div className="bg-black">
+        <div className="bg-black/40">
           {renderFile()}
         </div>
 
-        <div className="p-4">
-          <div className="flex justify-between items-center mb-2">
+        <div className="p-5">
+          <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-4">
-                  <button onClick={() => toggleLike(post.id)} className="flex items-center space-x-1">
-                      <HeartIcon className={`w-7 h-7 transition-colors ${isLiked ? 'text-red-500 fill-current' : 'text-gray-300 hover:text-gray-400'}`} />
+                  <button onClick={() => toggleLike(post.id)} className="group flex items-center gap-1">
+                      <HeartIcon className={`w-7 h-7 transition-all duration-300 transform group-hover:scale-110 ${isLiked ? 'text-accent fill-accent' : 'text-gray-300 hover:text-accent'}`} />
                   </button>
-                  <button onClick={() => setIsCommentsModalOpen(true)}><ChatBubbleOvalLeftEllipsisIcon className="w-7 h-7 text-gray-300 hover:text-gray-400" /></button>
-                  <button onClick={handleShare}><PaperAirplaneIcon className="w-7 h-7 text-gray-300 hover:text-gray-400" /></button>
+                  <button onClick={() => setIsCommentsModalOpen(true)} className="group">
+                    <ChatBubbleOvalLeftEllipsisIcon className="w-7 h-7 text-gray-300 group-hover:text-blue-400 transition-colors transform group-hover:scale-110 duration-300" />
+                  </button>
+                  <button onClick={handleShare} className="group">
+                    <PaperAirplaneIcon className="w-7 h-7 text-gray-300 group-hover:text-green-400 transition-colors transform group-hover:scale-110 duration-300" />
+                  </button>
               </div>
-              <button onClick={() => toggleFavorite(post.id)}>
-                <BookmarkIcon className={`w-7 h-7 transition-colors ${isFavorited ? 'text-accent fill-current' : 'text-gray-300 hover:text-gray-400'}`} />
+              <button onClick={() => toggleFavorite(post.id)} className="group">
+                <BookmarkIcon className={`w-7 h-7 transition-all duration-300 transform group-hover:scale-110 ${isFavorited ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`} />
               </button>
           </div>
 
-          <p className="font-semibold text-white">{post.likes.length} likes</p>
+          {post.likes.length > 0 && (
+            <p className="font-bold text-white text-sm mb-2">{post.likes.length} like{post.likes.length !== 1 ? 's' : ''}</p>
+          )}
 
-          <div className="mt-2">
-              <p>
-                <span className="font-semibold text-white mr-2">{author.username}</span>
+          <div className="mb-4">
+              <p className="text-gray-200 leading-relaxed">
+                <span className="font-bold text-white mr-2">{author.username}</span>
                 {post.caption}
               </p>
           </div>
           
-          <div className="mt-2">
-              {post.comments.length > 2 && <button onClick={() => setIsCommentsModalOpen(true)} className="text-sm text-gray-500 mt-1 hover:underline">View all {post.comments.length} comments</button>}
+          <div className="space-y-1.5">
               {post.comments.length > 0 && post.comments.slice(0, 2).map(comment => {
                   const commentAuthor = users.find(u => u.id === comment.userId);
                   return (
-                      <div key={comment.id} className="text-sm">
-                          <p>
-                            <span className="font-semibold text-white mr-2">
-                              {commentAuthor?.username}
-                              {commentAuthor?.role === 'admin' && (
-                                <span className="ml-1 mr-1 px-1 py-px bg-red-600 text-white text-[9px] font-bold rounded uppercase align-middle">
-                                  ADM
-                                </span>
-                              )}
-                            </span>
-                            {comment.text}
-                          </p>
+                      <div key={comment.id} className="text-sm flex items-start">
+                          <span className="font-bold text-white mr-2 whitespace-nowrap">
+                            {commentAuthor?.username}
+                          </span>
+                          <span className="text-gray-400 line-clamp-1">{comment.text}</span>
                       </div>
                   );
               })}
+              {post.comments.length > 2 && (
+                  <button onClick={() => setIsCommentsModalOpen(true)} className="text-sm text-gray-500 hover:text-gray-300 transition-colors mt-2 font-medium">
+                    View all {post.comments.length} comments
+                  </button>
+              )}
           </div>
-          
-          <p className="text-xs text-gray-500 uppercase mt-3">{timeSince(post.timestamp)} ago</p>
-
         </div>
           {currentUser && (
-              <form onSubmit={handleCommentSubmit} className="border-t border-gray-800 px-4 py-2 flex">
-                  <input
-                  type="text"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="bg-transparent w-full focus:outline-none text-sm"
-                  />
-                  <button type="submit" className="text-accent font-semibold text-sm disabled:text-gray-500" disabled={!commentText.trim()}>
-                  Post
-                  </button>
-              </form>
+              <div className="px-5 pb-5 pt-1">
+                <form onSubmit={handleCommentSubmit} className="relative flex items-center">
+                    <input
+                    type="text"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a comment..."
+                    className="w-full bg-black/30 border border-white/5 rounded-full py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/50 placeholder-gray-500 transition-all"
+                    />
+                    <button 
+                        type="submit" 
+                        disabled={!commentText.trim()}
+                        className="absolute right-2 text-accent font-bold text-xs px-3 py-1.5 rounded-full hover:bg-accent/10 disabled:opacity-0 transition-all"
+                    >
+                    Post
+                    </button>
+                </form>
+              </div>
           )}
       </div>
       {isCommentsModalOpen && <CommentsModal post={post} onClose={() => setIsCommentsModalOpen(false)} />}

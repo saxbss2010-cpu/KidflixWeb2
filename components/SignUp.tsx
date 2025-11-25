@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AppContext } from '../contexts/AppContext';
@@ -13,7 +12,6 @@ const simpleHash = (s: string) => {
   }
   return hash.toString();
 };
-
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -66,38 +64,49 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-8 bg-secondary rounded-lg shadow-lg border border-gray-700">
-      <h2 className="text-3xl font-bold text-center text-white mb-8">Create an Account</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-300">Username</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-accent focus:border-accent" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-300">Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-accent focus:border-accent" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-300">Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-accent focus:border-accent" />
-        </div>
-        <div>
-            <label className="block text-sm font-medium text-gray-300">reCAPTCHA</label>
-            <div className="mt-1 flex items-center space-x-4 p-3 bg-gray-800 border border-gray-600 rounded-md">
-                <p className="font-mono text-lg text-white">{`${captcha.num1} ${captcha.operator} ${captcha.num2} = ?`}</p>
-                <input type="number" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} required className="w-full bg-gray-700 border border-gray-500 rounded-md py-1 px-2 text-white focus:outline-none focus:ring-accent focus:border-accent" />
+    <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="w-full max-w-md p-8 bg-glass-gradient backdrop-blur-2xl rounded-3xl shadow-2xl border border-glass-border">
+            <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Join WebFree</h1>
+                <p className="text-gray-400">Start your journey today.</p>
             </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Username</label>
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all" placeholder="johndoe" />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Email</label>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all" placeholder="name@example.com" />
+                </div>
+                <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Password</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all" placeholder="••••••••" />
+                </div>
+                
+                <div className="p-4 bg-black/20 rounded-xl border border-white/5">
+                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Security Check</label>
+                    <div className="flex items-center space-x-3">
+                        <div className="bg-white/10 px-4 py-2 rounded-lg font-mono text-lg text-accent font-bold select-none tracking-widest">
+                            {`${captcha.num1} ${captcha.operator} ${captcha.num2}`}
+                        </div>
+                        <span className="text-gray-400 font-bold">=</span>
+                        <input type="number" value={captchaInput} onChange={(e) => setCaptchaInput(e.target.value)} required className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white text-center font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all" placeholder="?" />
+                    </div>
+                </div>
+
+                <button type="submit" className="w-full py-3.5 px-4 bg-gradient-to-r from-accent to-red-600 hover:from-accent-hover hover:to-red-700 rounded-xl shadow-lg shadow-accent/20 text-white font-bold tracking-wide transform hover:scale-[1.02] transition-all duration-200 mt-4">
+                Sign Up
+                </button>
+            </form>
+            <p className="mt-8 text-center text-sm text-gray-400">
+                Already have an account?{' '}
+                <Link to="/login" className="font-semibold text-accent hover:text-white transition-colors">
+                Log in
+                </Link>
+            </p>
         </div>
-        <button type="submit" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-hover transition-colors">
-          Sign Up
-        </button>
-      </form>
-      <p className="mt-6 text-center text-sm text-gray-400">
-        Already have an account?{' '}
-        <Link to="/login" className="font-medium text-accent hover:text-accent-hover">
-          Log in
-        </Link>
-      </p>
     </div>
   );
 };

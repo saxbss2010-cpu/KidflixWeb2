@@ -25,7 +25,7 @@ const Notifications: React.FC = () => {
       case 'NEW_POST':
         return (
             <>
-                <Link to={`/profile/${actor.username}`} className="font-bold hover:underline">{actor.username}</Link> has created a new post.
+                <Link to={`/profile/${actor.username}`} className="font-bold text-white hover:text-accent transition-colors">{actor.username}</Link> <span className="text-gray-300">shared a new post.</span>
             </>
         );
       default:
@@ -49,32 +49,40 @@ const Notifications: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-secondary rounded-lg border border-gray-700 shadow-lg">
-        <h1 className="text-2xl font-bold text-white p-6 border-b border-gray-700">Notifications</h1>
-        <div className="divide-y divide-gray-700">
+    <div className="max-w-2xl mx-auto bg-glass-gradient backdrop-blur-xl rounded-3xl border border-glass-border shadow-2xl overflow-hidden">
+        <div className="p-6 border-b border-white/5 bg-white/5">
+             <h1 className="text-2xl font-bold text-white">Notifications</h1>
+        </div>
+        
+        <div className="divide-y divide-white/5">
             {userNotifications.length > 0 ? (
                 userNotifications.map(notification => {
                      const actor = users.find(u => u.id === notification.actorId);
                      if(!actor) return null;
                     return (
-                        <div key={notification.id} className={`p-4 flex items-start space-x-4 ${!notification.read ? 'bg-accent/10' : ''}`}>
-                             <Link to={`/profile/${actor.username}`}>
-                                <img src={actor.avatar} alt={actor.username} className="w-10 h-10 rounded-full object-cover"/>
+                        <div key={notification.id} className={`p-5 flex items-start space-x-4 transition-colors ${!notification.read ? 'bg-accent/5' : 'hover:bg-white/5'}`}>
+                             <Link to={`/profile/${actor.username}`} className="flex-shrink-0">
+                                <img src={actor.avatar} alt={actor.username} className="w-12 h-12 rounded-full object-cover ring-2 ring-white/10"/>
                             </Link>
-                            <div className="flex-1">
-                                <p className="text-gray-300">
+                            <div className="flex-1 pt-1">
+                                <p className="text-sm leading-relaxed">
                                     {getNotificationMessage(notification)}
                                 </p>
-                                <p className="text-xs text-gray-500 mt-1">{timeSince(notification.timestamp)} ago</p>
+                                <p className="text-xs text-gray-500 mt-1.5 font-medium">{timeSince(notification.timestamp)} ago</p>
                             </div>
+                            {!notification.read && (
+                                <span className="w-2 h-2 bg-accent rounded-full mt-3"></span>
+                            )}
                         </div>
                     );
                 })
             ) : (
-                <div className="text-center py-20 text-gray-500">
-                    <BellIcon className="w-16 h-16 mx-auto mb-4"/>
-                    <h2 className="text-xl font-semibold">No notifications yet</h2>
-                    <p>Updates about your account will appear here.</p>
+                <div className="text-center py-24 text-gray-500">
+                    <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <BellIcon className="w-10 h-10 text-gray-600"/>
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">All caught up</h2>
+                    <p className="text-sm">Notifications about your activity will show up here.</p>
                 </div>
             )}
         </div>

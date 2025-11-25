@@ -87,7 +87,7 @@ export const BellIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export const Cog6ToothIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-1.003 1.11-1.226l.55-.22a2.25 2.25 0 012.122 0l.55.22c.55.223.998.684 1.11 1.226l.114.542c.11.523.322.99.597 1.42l.278.428c.373.573.886 1.042 1.488 1.348l.495.257c.62.324 1.155.77 1.54 1.298l.38.532c.334.468.575.98.68 1.52l.107.542c.112.55.112 1.144 0 1.694l-.107.542c-.105.54-.346 1.052-.68 1.52l-.38.532c-.385.528-.92.974-1.54 1.298l-.495.257c-.602.306-1.115.775-1.488 1.348l-.278.428c-.275.43-.487.897-.597 1.42l-.114.542c-.112.542-.56.993-1.11 1.226l-.55.22a2.25 2.25 0 01-2.122 0l-.55-.22c-.55-.223-.998-.684-1.11-1.226l-.114-.542a4.502 4.502 0 01-.597-1.42l-.278-.428c-.373-.573-.886-1.042-1.488-1.348l-.495-.257c-.62-.324-1.155-.77-1.54-1.298l-.38-.532c-.334-.468-.575-.98-.68-1.52l-.107-.542c-.112-.55-.112-1.144 0-1.694l.107.542c.105.54.346-1.052.68-1.52l.38.532c.385.528.92.974 1.54 1.298l.495.257c.602.306 1.115.775 1.488 1.348l.278.428c.275.43.487.897.597 1.42l.114.542zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-1.003 1.11-1.226l.55-.22a2.25 2.25 0 012.122 0l.55.22c.55.223.998.684 1.11 1.226l.114.542c.11.523.322.99.597 1.42l.278.428c.373.573.886 1.042 1.488 1.348l.495.257c.62.324 1.155.77 1.54 1.298l.38.532c.334.468.575.98.68 1.52l.107.542c.112.55.112 1.144 0 1.694l-.107.542c-.105.54-.346 1.052-.68 1.52l-.38.532c-.385.528-.92.974-1.54 1.298l-.495.257c-.602.306-1.115.775-1.488 1.348l.278.428c.275.43.487.897.597 1.42l.114.542zM12 15a3 3 0 100-6 3 3 0 000 6z" />
     </svg>
 );
 
@@ -97,16 +97,26 @@ export const ServerIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-// FIX: Add ArrowLeftIcon for navigation in the Messages component.
 export const ArrowLeftIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
     </svg>
 );
 
-// FIX: Add ChatBubbleLeftRightIcon for placeholder in the Messages component.
 export const ChatBubbleLeftRightIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193l-3.72.372a11.956 11.956 0 01-6.262 1.733H6.498c-1.136 0-2.097-.847-2.193-1.98l-.372-3.72a11.956 11.956 0 011.733-6.262l3.72-.372c.97-.097 1.813-.633 2.097-1.5zM16.5 8.25c0-1.92.063-3.811.188-5.682a2.25 2.25 0 00-2.234-2.348H7.534a2.25 2.25 0 00-2.234 2.348c.125 1.87.188 3.761.188 5.681" />
     </svg>
+);
+
+export const CheckCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+export const ExclamationCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+  </svg>
 );
