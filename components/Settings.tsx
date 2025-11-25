@@ -14,7 +14,7 @@ const simpleHash = (s: string) => {
 };
 
 const Settings: React.FC = () => {
-  const { currentUser, updateUserProfile, updatePassword, showToast, updateUserAvatar } = useContext(AppContext);
+  const { currentUser, updateUserProfile, updatePassword, showToast, updateUserAvatar, deleteUser } = useContext(AppContext);
   const navigate = useNavigate();
 
   if (!currentUser) {
@@ -83,6 +83,12 @@ const Settings: React.FC = () => {
         setNewAvatarPreview(null);
         showToast('Profile picture updated successfully!', 'success');
     }
+  };
+
+  const handleDeleteAccount = () => {
+      if (window.confirm('Are you sure you want to delete your account? This action is irreversible.')) {
+          deleteUser(currentUser.id);
+      }
   };
 
   const InputField = ({ label, id, type, value, onChange, placeholder }: any) => (
@@ -162,6 +168,25 @@ const Settings: React.FC = () => {
              <button type="submit" className="py-3 px-8 rounded-xl text-sm font-bold text-white bg-accent hover:bg-accent-hover shadow-lg shadow-accent/20 transition-all transform hover:scale-105">Update Password</button>
           </div>
         </form>
+      </div>
+
+      <div className="bg-glass-gradient backdrop-blur-xl rounded-3xl border border-glass-border overflow-hidden border-red-500/20">
+        <div className="p-6 border-b border-white/5 bg-red-500/10">
+            <h2 className="text-xl font-bold text-red-400">Delete Account</h2>
+        </div>
+        <div className="p-8">
+            <p className="text-gray-300 mb-6 leading-relaxed">
+                Permanently delete your account and all associated content. This action cannot be undone and your username will become available for others.
+            </p>
+            <div className="flex justify-end">
+                <button 
+                    onClick={handleDeleteAccount}
+                    className="py-3 px-6 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all transform hover:scale-[1.02]"
+                >
+                    Delete Account
+                </button>
+            </div>
+        </div>
       </div>
     </div>
   );

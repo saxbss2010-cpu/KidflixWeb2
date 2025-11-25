@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 // FIX: Import the Message type for the new messaging feature.
 import { User, Post, Comment, Notification, Message } from '../types';
@@ -334,14 +333,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteUser = (userId: string) => {
-    if (!currentUser || currentUser.role !== 'admin') {
-      showToast('You do not have permission to delete users.', 'error');
+    if (!currentUser) return;
+
+    // Allow if admin or if deleting self
+    if (currentUser.role !== 'admin' && currentUser.id !== userId) {
+      showToast('You do not have permission to delete this user.', 'error');
       return;
     }
-    if (currentUser.id === userId) {
-      showToast('You cannot delete your own account.', 'error');
-      return;
-    }
+
     const userToDelete = users.find(u => u.id === userId);
     if (!userToDelete) {
       showToast('User not found.', 'error');
@@ -373,11 +372,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }));
       
       // Update currentUser state if their own profile data (e.g. following list) changed
-      const updatedCurrentUser = newUsers.find(u => u.id === currentUser.id);
-      if (updatedCurrentUser) {
-        // A simple stringify check is a pragmatic way to detect changes
-        if (JSON.stringify(updatedCurrentUser) !== JSON.stringify(prevUsers.find(u => u.id === currentUser.id))) {
-          setCurrentUser(updatedCurrentUser);
+      // Logic for admin deleting another user
+      if (currentUser.id !== userId) {
+        const updatedCurrentUser = newUsers.find(u => u.id === currentUser.id);
+        if (updatedCurrentUser) {
+          if (JSON.stringify(updatedCurrentUser) !== JSON.stringify(prevUsers.find(u => u.id === currentUser.id))) {
+            setCurrentUser(updatedCurrentUser);
+          }
         }
       }
       return newUsers;
@@ -386,7 +387,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Remove notifications involving the user
     setNotifications(prev => prev.filter(n => n.actorId !== userId && n.recipientId !== userId));
 
-    showToast(`User '${userToDelete.username}' and all their content has been deleted.`, 'success');
+    // Remove messages involving the user
+    setMessages(prev => prev.filter(m => m.senderId !== userId && m.recipientId !== userId));
+
+    if (currentUser.id === userId) {
+      setCurrentUser(null);
+      showToast('Your account has been deleted.', 'success');
+    } else {
+      showToast(`User '${userToDelete.username}' and all their content has been deleted.`, 'success');
+    }
   };
 
   // FIX: Implement sendMessage function.
